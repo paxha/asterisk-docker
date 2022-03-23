@@ -6,6 +6,6 @@ services:
       dockerfile: Dockerfile
     image: astdoc:current
     ports:
-      - '5060:5060'
+      - '5060:5060/udp'
     volumes:
       - '.:/etc/asterisk'

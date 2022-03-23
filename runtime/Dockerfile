@@ -2,7 +2,7 @@ FROM ubuntu:21.10
 
 LABEL maintainer="Hassan Raza Pasha"
 
-ENV ASTERISK_VERSION 18
+ENV ASTERISK_VERSION 19
 
 WORKDIR /etc/asterisk
 
