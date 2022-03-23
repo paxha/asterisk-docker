@@ -1,0 +1,11 @@
+version: '3'
+services:
+  asterisk.test:
+    build:
+      context: ./runtime
+      dockerfile: Dockerfile
+    image: astdoc:current
+    ports:
+      - '5060:5060'
+    volumes:
+      - '.:/etc/asterisk'
