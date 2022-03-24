@@ -22,3 +22,14 @@ docker exec -it asterisk.test bash
 
 asterisk.test is your container name
 
+## Testing
+
+login any softphone e.g. zoiper or linphone with these credentials.
+
+```text
+username: `6001`
+password: `6001`
+host: YOUR_IP_ADDRESS
+```
+
+and dial `100` you will get `demo-congrats`.
