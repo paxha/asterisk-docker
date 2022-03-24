@@ -2,9 +2,16 @@ FROM ubuntu:21.10
 
 LABEL maintainer="Hassan Raza Pasha"
 
-ENV ASTERISK_VERSION 19
+ARG ASTERISK_VERSION
+ARG UDP_PORT
+ARG MYSQL_DATABASE
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
 
 WORKDIR /etc/asterisk
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV TZ=UTC
 
 RUN apt update  \
     && apt upgrade -y \
@@ -35,6 +42,7 @@ RUN apt update  \
       portaudio19-dev \
       procps \
       unixodbc \
+      odbc-mariadb \
       unixodbc-dev \
       uuid \
       uuid-dev \
@@ -47,14 +55,18 @@ RUN apt update  \
     && make menuselect/menuselect menuselect-tree menuselect.makeopts \
     && make -j $(nproc) \
     && make install \
-    && make samples \
-    && sed -i -E 's/^;(run)(user|group)/\1\2/' /etc/asterisk/asterisk.conf \
     && useradd --system asterisk \
     && chown -R asterisk:asterisk /etc/asterisk \
                                   /var/*/asterisk \
                                   /usr/*/asterisk \
     && chmod -R 750 /var/spool/asterisk
 
-EXPOSE 5060/udp
+COPY odbc.ini /etc/odbc.ini
+
+RUN sed -i "s/MYSQL_DATABASE/$MYSQL_DATABASE/g" /etc/odbc.ini;
+RUN sed -i "s/MYSQL_USER/$MYSQL_USER/g" /etc/odbc.ini;
+RUN sed -i "s/MYSQL_PASSWORD/$MYSQL_PASSWORD/g" /etc/odbc.ini;
+
+EXPOSE $UDP_PORT/udp
 
 CMD ["asterisk", "-vvvdddf"]

@@ -4,8 +4,39 @@ services:
     build:
       context: ./runtime
       dockerfile: Dockerfile
+      args:
+        ASTERISK_VERSION: 19
+        UDP_PORT: 5060
+        MYSQL_DATABASE: 'asterisk'
+        MYSQL_USER: 'pasha'
+        MYSQL_PASSWORD: 'password'
     image: astdoc:current
     ports:
       - '5060:5060/udp'
     volumes:
       - '.:/etc/asterisk'
+    networks:
+      - astdoc
+    depends_on:
+      - mysql
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: 'asterisk'
+      MYSQL_USER: 'pasha'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'astdoc-mysql:/var/lib/mysql'
+    networks:
+      - astdoc
+networks:
+  astdoc:
+    driver: bridge
+volumes:
+  astdoc-mysql:
+    driver: local
